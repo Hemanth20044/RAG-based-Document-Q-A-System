@@ -52,8 +52,9 @@ def load_document(uploaded_file):
 
         # Set path only on Windows
         if platform.system() == "Windows":
-            pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-
+            # If needed, set tesseract cmd path here, e.g.:
+            # pytesseract.pytesseract.tesseract_cmd = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+            pass
         documents = []
         pdf = fitz.open(tmp_path)
         
