@@ -58,7 +58,9 @@ def load_document(uploaded_file):
             if not text.strip():
                 import pytesseract
                 from PIL import Image
-                pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+                import platform
+                if platform.system() == "Windows":
+                    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
                 pix = page.get_pixmap(dpi=400)
                 img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
                 text = pytesseract.image_to_string(img)
