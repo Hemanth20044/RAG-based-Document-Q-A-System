@@ -14,3 +14,4 @@ python-dotenv==1.0.1
 numpy==1.26.4
 packaging==24.1
 pillow==10.4.0
+pytesseract==0.3.13
