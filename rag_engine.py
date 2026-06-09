@@ -34,7 +34,6 @@ except Exception:
     # If any heavy import fails, use stubs so the app can run for development/UI testing
     USE_STUB = True
 
-
 def load_document(uploaded_file):
     suffix = ".pdf" if uploaded_file.name.endswith(".pdf") else ".docx"
     
@@ -46,22 +45,23 @@ def load_document(uploaded_file):
         loader = Docx2txtLoader(tmp_path)
         documents = loader.load()
     else:
-        # Try normal text extraction first
-        import fitz  # pymupdf
+        import fitz
+        import pytesseract
+        from PIL import Image
+        import platform
+
+        # Set path only on Windows
+        if platform.system() == "Windows":
+            pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
         documents = []
         pdf = fitz.open(tmp_path)
         
         for page_num, page in enumerate(pdf):
             text = page.get_text()
             
-            # If no text, use OCR
             if not text.strip():
-                import pytesseract
-                from PIL import Image
-                import platform
-                if platform.system() == "Windows":
-                    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-                pix = page.get_pixmap(dpi=400)
+                pix = page.get_pixmap(dpi=300)
                 img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
                 text = pytesseract.image_to_string(img)
             
@@ -78,7 +78,6 @@ def load_document(uploaded_file):
     print(f"Loaded {len(documents)} pages")
     print(f"First page text: '{documents[0].page_content[:200] if documents else ''}'")
     return documents
-
 
 def build_vectorstore(documents):
     """Builds a vectorstore; stubbed version uses simple token overlap ranking."""
